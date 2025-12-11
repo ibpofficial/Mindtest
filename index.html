@@ -1,7 +1,7 @@
- <!DOCTYPE html>
-<html lang="en">  
- <head>
-      <meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MindScrape Pro - Digital Behavior Analytics</title>
     <!-- Tailwind CSS -->
@@ -116,6 +116,18 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
+        /* Animation for the Team Modal */
+.fade-in {
+    animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
     </style>
 </head>
 <body class="min-h-screen selection:bg-indigo-100 selection:text-indigo-900 relative bg-grid-animated">
@@ -161,36 +173,162 @@
         </div>
     </div>
 
-    <!-- Header -->
-    <header class="fixed top-0 left-0 w-full p-4 md:p-6 flex justify-between items-center z-50 bg-white/70 backdrop-blur-md border-b border-white/50 shadow-sm">
-        <div class="flex items-center gap-3">
-            <div class="p-2 bg-indigo-600 rounded-lg shadow-lg shadow-indigo-200">
-                <i data-lucide="activity" class="w-5 h-5 text-white"></i>
-            </div>
-            <div>
-                <span class="font-bold tracking-tight text-sm text-slate-900 block">MIND_SCRAPE</span>
-                <span class="text-[10px] text-slate-500 font-mono tracking-widest">PRO_EDITION</span>
-            </div>
+    <!-- Floating Controls -->
+    <div class="fixed top-6 right-6 z-50 flex flex-col items-end gap-2">
+        <!-- HUD -->
+        <div id="mini-hud" class="hidden opacity-0 transition-opacity duration-500 flex items-center gap-3 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-full shadow-lg backdrop-blur-sm bg-white/80">
+            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Resilience</span>
+            <span id="live-score-display" class="font-mono font-bold text-indigo-600 leading-none text-sm">0%</span>
         </div>
-        
-        <div class="flex items-center gap-4">
-            <!-- HUD -->
-            <div id="mini-hud" class="hidden opacity-0 transition-opacity duration-500 flex items-center gap-3 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-full">
-                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Resilience</span>
-                <span id="live-score-display" class="font-mono font-bold text-indigo-600 leading-none text-sm">0%</span>
-            </div>
+
+        <!-- Control Buttons -->
+        <div class="flex flex-col gap-2 items-end">
+            <!-- Our Team Button -->
+            <button onclick="toggleTeamModal(true)" class="group flex items-center gap-2 px-4 py-3 rounded-full bg-white/80 backdrop-blur-sm border border-slate-200 hover:border-indigo-200 hover:shadow-lg transition-all text-sm font-medium text-slate-700 shadow-md">
+                <i data-lucide="users" class="w-5 h-5 text-indigo-500"></i>
+                <span class="hidden md:inline opacity-0 group-hover:opacity-100 transition-opacity duration-200">Our Team</span>
+            </button>
 
             <!-- Info Button -->
-            <button onclick="toggleModal(true)" class="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-slate-200 hover:border-indigo-200 hover:shadow-md transition-all text-xs font-medium text-slate-600">
-                <i data-lucide="info" class="w-4 h-4 text-indigo-500"></i>
-                <span class="hidden md:inline">How it works</span>
+            <button onclick="toggleModal(true)" class="group flex items-center gap-2 px-4 py-3 rounded-full bg-white/80 backdrop-blur-sm border border-slate-200 hover:border-indigo-200 hover:shadow-lg transition-all text-sm font-medium text-slate-700 shadow-md">
+                <i data-lucide="info" class="w-5 h-5 text-indigo-500"></i>
+                <span class="hidden md:inline opacity-0 group-hover:opacity-100 transition-opacity duration-200">How it works</span>
             </button>
         </div>
-    </header>
+    </div>
+
+    <!-- Logo - Top Left -->
+    <div class="fixed top-6 left-6 z-50 flex items-center gap-3 bg-white/80 backdrop-blur-sm border border-slate-200 rounded-full px-4 py-2.5 shadow-lg">
+        <div class="p-2 bg-indigo-600 rounded-lg shadow-md shadow-indigo-200">
+            <i data-lucide="activity" class="w-4 h-4 text-white"></i>
+        </div>
+        <div>
+            <span class="font-bold tracking-tight text-sm text-slate-900 block">MIND SCRAPE</span>
+            <span class="text-[10px] text-slate-500 font-mono tracking-widest">PRO  </span>
+        </div>
+    </div>
 
     <!-- Main Container -->
-    <div class="relative z-10 max-w-5xl mx-auto min-h-screen flex flex-col justify-center p-4 md:p-6 pt-24">
+    <div class="relative z-10 max-w-5xl mx-auto min-h-screen flex flex-col justify-center p-4 md:p-6 pt-16">
+        <!-- FULL PAGE TEAM MODAL -->
+<!-- Add this snippet inside your <body> tag -->
+<div id="team-modal" class="hidden fixed inset-0 z-[100] bg-white overflow-y-auto fade-in">
+    <div class="max-w-6xl mx-auto p-6 md:p-12 relative min-h-screen">
+        
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-12 sticky top-0 bg-white/90 backdrop-blur-sm py-4 z-10 border-b border-slate-100">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-blue-600 rounded-2xl shadow-lg shadow-blue-200">
+                    <!-- Icon: Users -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-black text-slate-900 tracking-tight">The Visionaries</h2>
+                    <p class="text-sm text-slate-500 font-medium">MindScrape Project • Fall 2025</p>
+                </div>
+            </div>
+            <button onclick="toggleTeamModal(false)" class="group flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 transition-all font-bold text-slate-600">
+                <span>Close</span>
+                <!-- Icon: X -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:rotate-90 transition-transform"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+        </div>
 
+        <!-- Team Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- Member 1 -->
+            <div class="flex flex-col md:flex-row items-center md:items-start gap-6 p-8 rounded-[2rem] border border-slate-200 bg-white shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:border-blue-200 transition-all duration-300 group">
+                <div class="w-32 h-32 rounded-full p-1 bg-gradient-to-br from-blue-500 to-indigo-600 flex-shrink-0 shadow-lg group-hover:scale-105 transition-transform">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex&backgroundColor=c7d2fe" alt="Member" class="w-full h-full object-cover rounded-full border-4 border-white">
+                </div>
+                <div class="text-center md:text-left w-full">
+                    <div class="inline-block px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider mb-2">Lead Architect</div>
+                    <div class="inline-block px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-bold uppercase tracking-wider mb-2">Backend & Security</div>
+                    <div class="inline-block px-3 py-1 rounded-full bg-rose-50 text-rose-700 text-xs font-bold uppercase tracking-wider mb-2">Api calls </div>
+                    <div class="inline-block px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-wider mb-2">Logics backend with UX</div>
+                    
+                    <h3 class="text-2xl font-black text-slate-900 mb-1">Ishant upadhyay </h3>
+                    <p class="text-sm font-mono text-slate-400 mb-4 flex items-center justify-center md:justify-start gap-2">
+                        <!-- Icon: ID Card -->
+                        <svg xmlns="ishant.jfif" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="13" x="3" y="5" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M7 15h4"/><path d="M15 15h2"/><path d="M15 11h2"/></svg>
+                        ERP-:38116
+                    </p>
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 text-sm text-slate-600 leading-relaxed">
+                        <span class="font-bold text-slate-900 block mb-1">Contribution:</span>
+.“I built the entire backend ecosystem, including all APIs, system logic, state management, scoring engines, and AI integrations. While the UI was separate, every functional process behind this platform was engineered by me.”
+                    </div>
+                </div>
+            </div>
+
+            <!-- Member 2 -->
+            <div class="flex flex-col md:flex-row items-center md:items-start gap-6 p-8 rounded-[2rem] border border-slate-200 bg-white shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:border-emerald-200 transition-all duration-300 group">
+                <div class="w-32 h-32 rounded-full p-1 bg-gradient-to-br from-emerald-400 to-teal-500 flex-shrink-0 shadow-lg group-hover:scale-105 transition-transform">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah&backgroundColor=a7f3d0" alt="Member" class="w-full h-full object-cover rounded-full border-4 border-white">
+                </div>
+                <div class="text-center md:text-left w-full">
+                    <div class="inline-block px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-wider mb-2">research</div>
+                      <div class="inline-block px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-wider mb-2">analysis</div>
+                      <div class="inline-block px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-wider mb-2">pattern analysis</div>
+                    <h3 class="text-2xl font-black text-slate-900 mb-1">Kritika singh</h3>
+                    <p class="text-sm font-mono text-slate-400 mb-4 flex items-center justify-center md:justify-start gap-2">
+                        <svg xmlns="kritika.jpeg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="13" x="3" y="5" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M7 15h4"/><path d="M15 15h2"/><path d="M15 11h2"/></svg>
+                        ERP-:43248
+                    </p>
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 text-sm text-slate-600 leading-relaxed">
+                        <span class="font-bold text-slate-900 block mb-1">Contribution:</span>
+                        Conducted in-depth research on digital behavior psychology, crafted the diagnostic questionnaire framework, validated scoring distributions, and analyzed survey patterns to refine category weights. Designed the logic for generating accurate, personalized psychometric reports.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Member 3 -->
+            <div class="flex flex-col md:flex-row items-center md:items-start gap-6 p-8 rounded-[2rem] border border-slate-200 bg-white shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:border-amber-200 transition-all duration-300 group">
+                <div class="w-32 h-32 rounded-full p-1 bg-gradient-to-br from-amber-400 to-orange-500 flex-shrink-0 shadow-lg group-hover:scale-105 transition-transform">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Rahul&backgroundColor=fde68a" alt="Member" class="w-full h-full object-cover rounded-full border-4 border-white">
+                </div>
+                <div class="text-center md:text-left w-full">
+                    <div class="inline-block px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-bold uppercase tracking-wider mb-2">UI & UX DESIGN </div>
+                    <h3 class="text-2xl font-black text-slate-900 mb-1">Priyanshu Kumar</h3>
+                    <p class="text-sm font-mono text-slate-400 mb-4 flex items-center justify-center md:justify-start gap-2">
+                        <svg xmlns="priyanshu.jpeg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="13" x="3" y="5" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M7 15h4"/><path d="M15 15h2"/><path d="M15 11h2"/></svg>
+                        ERP-:00000
+                    </p>
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 text-sm text-slate-600 leading-relaxed">
+                        <span class="font-bold text-slate-900 block mb-1">Contribution:</span>
+                        Designed the complete user interface and experience flow, crafting clean layouts, intuitive interactions, and responsive components. Developed the visual identity, animations, and design system that shaped the platform’s overall feel and usability
+                    </div>
+                </div>
+            </div>
+
+            <!-- Member 4 -->
+            <div class="flex flex-col md:flex-row items-center md:items-start gap-6 p-8 rounded-[2rem] border border-slate-200 bg-white shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:border-rose-200 transition-all duration-300 group">
+                <div class="w-32 h-32 rounded-full p-1 bg-gradient-to-br from-rose-400 to-pink-500 flex-shrink-0 shadow-lg group-hover:scale-105 transition-transform">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Nita&backgroundColor=fecdd3" alt="Member" class="w-full h-full object-cover rounded-full border-4 border-white">
+                </div>
+                <div class="text-center md:text-left w-full">
+                    <div class="inline-block px-3 py-1 rounded-full bg-rose-50 text-rose-700 text-xs font-bold uppercase tracking-wider mb-2">DATA VERIFICATION & RESEARCH ABOUT REAL DATA</div>
+                    <h3 class="text-2xl font-black text-slate-900 mb-1">Priyanshu </h3>
+                    <p class="text-sm font-mono text-slate-400 mb-4 flex items-center justify-center md:justify-start gap-2">
+                        <svg xmlns="priyanshu2.jpeg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="13" x="3" y="5" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M7 15h4"/><path d="M15 15h2"/><path d="M15 11h2"/></svg>
+                        ERP-:00000
+                    </p>
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 text-sm text-slate-600 leading-relaxed">
+                        <span class="font-bold text-slate-900 block mb-1">Contribution:</span>
+                        Researched psychological markers for screen addiction, curated the question bank weights, and selected the recovery video protocols.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        
+        <div class="mt-12 text-center">
+            <button onclick="toggleTeamModal(false)" class="px-8 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1">
+                Return to App
+            </button>
+        </div>
+    </div>
+</div>
         <!-- SECTION: WELCOME -->
         <div id="step-welcome" class="text-center space-y-8 fade-in">
             <div class="relative inline-block mb-4">
@@ -435,24 +573,21 @@
 
         // --- VIDEOS ---
         const VIDEOS = {
-            CRITICAL: {
-                title: "Dopamine Detox",
-                desc: "A necessary reset for your brain's reward system.",
-                id: "p3JPa2mvSq4", 
-                thumb: "https://img.youtube.com/vi/p3JPa2mvSq4/mqdefault.jpg"
-            },
-            MODERATE: {
-                title: "Atomic Habits",
-                desc: "How to build small habits to regain control.",
-                id: "PZ7lDrwYdZc",
-                thumb: "https://img.youtube.com/vi/PZ7lDrwYdZc/mqdefault.jpg"
-            },
-            OPTIMAL: {
-                title: "Digital Minimalism",
-                desc: "Optimizing your digital life for deeper focus.",
-                id: "w82a1FT5o88",
-                thumb: "https://img.youtube.com/vi/w82a1FT5o88/mqdefault.jpg"
-            }
+            CRITICAL: [
+                { title: "Dopamine Detox", desc: "A necessary reset for your brain's reward system.", id: "p3JPa2mvSq4", thumb: "https://img.youtube.com/vi/p3JPa2mvSq4/mqdefault.jpg" },
+                { title: "Phone Addiction is Ruining Your Life", desc: "Simon Sinek on the impact of technology on relationships.", id: "31F1eEzuPkw", thumb: "https://img.youtube.com/vi/31F1eEzuPkw/mqdefault.jpg" },
+                { title: "How Social Media Hacks Your Brain", desc: "Understanding the engineering behind addiction.", id: "NUM_sB7i35k", thumb: "https://img.youtube.com/vi/NUM_sB7i35k/mqdefault.jpg" }
+            ],
+            MODERATE: [
+                { title: "Atomic Habits", desc: "How to build small habits to regain control.", id: "PZ7lDrwYdZc", thumb: "https://img.youtube.com/vi/PZ7lDrwYdZc/mqdefault.jpg" },
+                { title: "Break Phone Addiction", desc: "Practical steps to stop scrolling.", id: "WnU3w_fD3E8", thumb: "https://img.youtube.com/vi/WnU3w_fD3E8/mqdefault.jpg" },
+                { title: "Quit Social Media", desc: "Cal Newport on the benefits of quitting.", id: "V74AxCqOTvg", thumb: "https://img.youtube.com/vi/V74AxCqOTvg/mqdefault.jpg" }
+            ],
+            OPTIMAL: [
+                { title: "Digital Minimalism", desc: "Optimizing your digital life for deeper focus.", id: "w82a1FT5o88", thumb: "https://img.youtube.com/vi/w82a1FT5o88/mqdefault.jpg" },
+                { title: "Deep Work", desc: "Rules for focused success in a distracted world.", id: "Hu4Yvq-g7_Y", thumb: "https://img.youtube.com/vi/Hu4Yvq-g7_Y/mqdefault.jpg" },
+                { title: "The Art of Focus", desc: "Train your brain to focus.", id: "2iH9t6j5t9M", thumb: "https://img.youtube.com/vi/2iH9t6j5t9M/mqdefault.jpg" }
+            ]
         };
 
         // --- STATE ---
@@ -597,20 +732,23 @@
             let badgeText = "OPTIMAL RESILIENCE";
             let colorClass = "text-emerald-500";
             let badgeColor = "bg-emerald-50 text-emerald-700 border-emerald-100";
-            let videoData = VIDEOS.OPTIMAL;
+            let videoList = VIDEOS.OPTIMAL;
 
             if (score < 70) {
                 badgeText = "MODERATE RISK";
                 colorClass = "text-amber-500";
                 badgeColor = "bg-amber-50 text-amber-700 border-amber-100";
-                videoData = VIDEOS.MODERATE;
+                videoList = VIDEOS.MODERATE;
             }
             if (score < 40) {
                 badgeText = "CRITICAL DEPENDENCY";
                 colorClass = "text-rose-500";
                 badgeColor = "bg-rose-50 text-rose-700 border-rose-100";
-                videoData = VIDEOS.CRITICAL;
+                videoList = VIDEOS.CRITICAL;
             }
+
+            // Select random video from the list
+            const videoData = videoList[Math.floor(Math.random() * videoList.length)];
 
             document.getElementById('result-score').innerText = score;
             document.getElementById('result-score').className = `text-8xl font-black tracking-tighter ${colorClass}`;
@@ -829,6 +967,22 @@
                 document.getElementById(loadingId).innerText = "Connection Error.";
             }
         }
+        /**
+ * Toggles the Full Page Team Modal.
+ * @param {boolean} show - True to show the modal, False to hide it.
+ */
+function toggleTeamModal(show) {
+    const modal = document.getElementById('team-modal');
+    if (show) {
+        modal.classList.remove('hidden');
+        // Prevent background scrolling when modal is open
+        document.body.style.overflow = 'hidden'; 
+    } else {
+        modal.classList.add('hidden');
+        // Restore scrolling
+        document.body.style.overflow = 'auto'; 
+    }
+}
     </script>
 </body>
 </html>
